@@ -1,0 +1,58 @@
+package com.RestAssuredAPI;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import com.codoid.products.fillo.Recordset;
+
+import io.restassured.response.Response;
+
+
+public class Response_Validation extends Global_Variables{
+	
+	
+	public void perform_ResponseAction(Response response,Recordset recTestData,int intIteration)
+	{
+		try{
+		General_Utilities objGenUtil = new General_Utilities();
+		int intStsCode = Integer.parseInt(recTestData.getField("Status_Code"));
+		envBslPath.set("./env_" + System.getProperty("environment")+"/response_Baseline/" + envTCName.get().toLowerCase() + "_itr_"+ intIteration);
+		envActResPath.set(envReportPath.get().toLowerCase() + "/responce_" + envTCName.get().toLowerCase() + "_itr_" + intIteration);
+		String StrCurDate = new SimpleDateFormat("yyyymmdd").format(new Date());;
+		validate_ResponseCode(response,intStsCode);// To validate the response code of for the service
+		switch(envExecType.get()){
+		  
+		  case "Baseline_JSON" :
+			custom_Reports.print_Report("INFO","Resonse Baseline", "Baselining the response JSON for the test case" + envTCName.get() +"_Iteration"+ intIteration);
+			objGenUtil.save_ResponceJSON(response, envActResPath.get());
+			objGenUtil.copy_File(envActResPath.get() + ".JSON", envBslPath.get() +".JSON");
+			custom_Reports.print_Report("INFO","BaseLine response","<a href='"+objGenUtil.getAbsolutePath(envBslPath.get())+".JSON'>Click to open Base Line Path</a>");
+			break;
+		  case "Compare_JSON" :
+			custom_Reports.print_Report("INFO","Respose JSON Comparison", "Comparison of the response and the baseline JNSON for the test case" + envTCName.get() +"_Iteration"+ intIteration);
+			objGenUtil.save_ResponceJSON(response,envActResPath.get());
+			custom_Reports.print_Report("INFO","BaseLine response","<a href='"+objGenUtil.getAbsolutePath(envBslPath.get())+".JSON'>Click to open Base Line Result</a>");
+			custom_Reports.print_Report("INFO","Actual response","<a href='"+objGenUtil.getAbsolutePath(envActResPath.get())+".JSON'>Click to open Actual Result</a>");
+			objGenUtil.compare_JSONResponse(envBslPath.get(),envActResPath.get());
+			break;
+		  case "Baseline_ByteArrayAsString" ://built to handle the byte array response
+			custom_Reports.print_Report("INFO","Baseline ByteArray", "Baselining the response byte array for the test case" + envTCName.get() +"_Iteration"+ intIteration);
+			objGenUtil.save_ResponceByteArray(response, envBslPath.get());
+			objGenUtil.save_ResponceByteArray(response, envActResPath.get());
+			objGenUtil.copy_File(envActResPath.get() + ".txt", envBslPath.get() +".txt");
+			custom_Reports.print_Report("INFO","BaseLine response","<a href='"+objGenUtil.getAbsolutePath(envBslPath.get())+".txt'>Click to open Base Line Path</a>");
+			break;
+		  case "Compare_ByteArrayAsString" ://built to handle the byte array response
+			custom_Reports.print_Report("INFO","Byte Array Comparison", "Comparision of the response and the baseline byte array for the test case" + envTCName.get() +"_Iteration"+ intIteration);
+			objGenUtil.save_ResponceByteArray(response, envActResPath.get());
+			objGenUtil.compare_StringResponse(envBslPath.get(), envActResPath.get());
+			custom_Reports.print_Report("INFO","BaseLine response","<a href='"+objGenUtil.getAbsolutePath(envBslPath.get())+".txt'>Click to open Base Line Path</a>");
+			custom_Reports.print_Report("INFO","Actual Response","<a href='"+objGenUtil.getAbsolutePath(envActResPath.get())+".txt'>Click to open Actual Result</a>");
+			break;
+			}
+		} catch(Exception e) {
+			custom_Reports.print_Report("FAIL","Exception in response validation", "Exception Details: " +e);
+			}
+
+
+}

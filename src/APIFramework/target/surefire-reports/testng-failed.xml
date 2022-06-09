@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite verbose="0" name="Failed suite [APIFramework]">
+  <test name="APITesting(failed)">
+    <classes>
+      <class name="com.RestAssuredAPI.Execution_Initiator_API">
+        <methods>
+          <include name="API_Automation"/>
+        </methods>
+      </class> <!-- com.RestAssuredAPI.Execution_Initiator_API -->
+    </classes>
+  </test> <!-- APITesting(failed) -->
+</suite> <!-- Failed suite [APIFramework] -->
